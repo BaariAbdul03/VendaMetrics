@@ -1,0 +1,371 @@
+{
+  "version": "5.73",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY26SU05",
+      "version": {
+        "visual": "2.9.0",
+        "report": "3.3.0",
+        "page": "2.3.1"
+      },
+      "type": 2
+    },
+    "customTheme": {
+      "name": "AccessibleDefault",
+      "version": {
+        "visual": "2.9.0",
+        "report": "3.3.0",
+        "page": "2.3.1"
+      },
+      "type": 2
+    }
+  },
+  "activeSectionIndex": 0,
+  "defaultDrillFilterOtherVisuals": true,
+  "settings": {
+    "useNewFilterPaneExperience": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  },
+  "sections": [
+    {
+      "name": "sec_executive_kpis",
+      "displayName": "Executive KPIs",
+      "width": 1280,
+      "height": 720,
+      "visualContainers": [
+        {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "width": 1280,
+          "height": 56,
+          "config": "{\"name\": \"c1f847ecbc064417a603\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 0, \"y\": 0, \"z\": 1, \"width\": 1280, \"height\": 56}}], \"singleVisual\": {\"visualType\": \"textbox\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": []}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Olist Marketplace \\u2014 Executive Performance Dashboard'\"}}}}}]}}}"
+        },
+        {
+          "id": 2,
+          "x": 16,
+          "y": 68,
+          "z": 2,
+          "width": 200,
+          "height": 110,
+          "config": "{\"name\": \"18fa9d0b3920497fbf12\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 68, \"z\": 2, \"width\": 200, \"height\": 110}}], \"singleVisual\": {\"visualType\": \"cardVisual\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_order_payments.GMV\", \"QueryRef\": \"olist_order_payments.GMV\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Gross Merchandise Value (GMV)'\"}}}}}]}}}"
+        },
+        {
+          "id": 3,
+          "x": 16,
+          "y": 190,
+          "z": 3,
+          "width": 200,
+          "height": 110,
+          "config": "{\"name\": \"db10fa9f349342e8b5e0\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 190, \"z\": 3, \"width\": 200, \"height\": 110}}], \"singleVisual\": {\"visualType\": \"cardVisual\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_orders.Total Orders\", \"QueryRef\": \"olist_orders.Total Orders\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Total Delivered Orders'\"}}}}}]}}}"
+        },
+        {
+          "id": 4,
+          "x": 16,
+          "y": 312,
+          "z": 4,
+          "width": 200,
+          "height": 110,
+          "config": "{\"name\": \"0a790298e7d6475bade1\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 312, \"z\": 4, \"width\": 200, \"height\": 110}}], \"singleVisual\": {\"visualType\": \"cardVisual\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_order_payments.AOV\", \"QueryRef\": \"olist_order_payments.AOV\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Average Order Value (AOV)'\"}}}}}]}}}"
+        },
+        {
+          "id": 5,
+          "x": 16,
+          "y": 434,
+          "z": 5,
+          "width": 200,
+          "height": 110,
+          "config": "{\"name\": \"5e2a9fbb25174cbc9bc6\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 434, \"z\": 5, \"width\": 200, \"height\": 110}}], \"singleVisual\": {\"visualType\": \"cardVisual\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_order_reviews.Avg Rating\", \"QueryRef\": \"olist_order_reviews.Avg Rating\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Customer Satisfaction Rating'\"}}}}}]}}}"
+        },
+        {
+          "id": 6,
+          "x": 16,
+          "y": 556,
+          "z": 6,
+          "width": 200,
+          "height": 110,
+          "config": "{\"name\": \"013419d9aa594063a82b\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 556, \"z\": 6, \"width\": 200, \"height\": 110}}], \"singleVisual\": {\"visualType\": \"cardVisual\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_orders.Late Delivery Rate\", \"QueryRef\": \"olist_orders.Late Delivery Rate\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Late Delivery Rate'\"}}}}}]}}}"
+        },
+        {
+          "id": 7,
+          "x": 230,
+          "y": 68,
+          "z": 7,
+          "width": 300,
+          "height": 48,
+          "config": "{\"name\": \"6d776fc4898644ee8b7b\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 230, \"y\": 68, \"z\": 7, \"width\": 300, \"height\": 48}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"DimDate.YearQuarter\", \"QueryRef\": \"DimDate.YearQuarter\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Year Filter'\"}}}}}]}}}"
+        },
+        {
+          "id": 8,
+          "x": 540,
+          "y": 68,
+          "z": 8,
+          "width": 340,
+          "height": 48,
+          "config": "{\"name\": \"3af882c419e6478b8e40\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 540, \"y\": 68, \"z\": 8, \"width\": 340, \"height\": 48}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_customers.customer_state\", \"QueryRef\": \"olist_customers.customer_state\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Customer State Filter'\"}}}}}]}}}"
+        },
+        {
+          "id": 9,
+          "x": 890,
+          "y": 68,
+          "z": 9,
+          "width": 374,
+          "height": 48,
+          "config": "{\"name\": \"efa28f246e8245a4a848\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 890, \"y\": 68, \"z\": 9, \"width\": 374, \"height\": 48}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_orders.order_status\", \"QueryRef\": \"olist_orders.order_status\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Order Status Filter'\"}}}}}]}}}"
+        },
+        {
+          "id": 10,
+          "x": 230,
+          "y": 128,
+          "z": 10,
+          "width": 660,
+          "height": 290,
+          "config": "{\"name\": \"72965d43650747acaaab\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 230, \"y\": 128, \"z\": 10, \"width\": 660, \"height\": 290}}], \"singleVisual\": {\"visualType\": \"lineClusteredColumnComboChart\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"DimDate.YearMonth\", \"QueryRef\": \"DimDate.YearMonth\"}, {\"Name\": \"olist_order_payments.GMV\", \"QueryRef\": \"olist_order_payments.GMV\"}, {\"Name\": \"olist_orders.Total Orders\", \"QueryRef\": \"olist_orders.Total Orders\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Monthly GMV & Order Volume Trend'\"}}}}}]}}}"
+        },
+        {
+          "id": 11,
+          "x": 906,
+          "y": 128,
+          "z": 11,
+          "width": 358,
+          "height": 290,
+          "config": "{\"name\": \"049d2afc9ea047189cd8\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 906, \"y\": 128, \"z\": 11, \"width\": 358, \"height\": 290}}], \"singleVisual\": {\"visualType\": \"donutChart\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_order_payments.payment_type\", \"QueryRef\": \"olist_order_payments.payment_type\"}, {\"Name\": \"olist_order_payments.payment_value\", \"QueryRef\": \"olist_order_payments.payment_value\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Payment Method Distribution'\"}}}}}]}}}"
+        },
+        {
+          "id": 12,
+          "x": 230,
+          "y": 430,
+          "z": 12,
+          "width": 660,
+          "height": 274,
+          "config": "{\"name\": \"82ebd4926f77460cb6fb\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 230, \"y\": 430, \"z\": 12, \"width\": 660, \"height\": 274}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_customers.customer_state\", \"QueryRef\": \"olist_customers.customer_state\"}, {\"Name\": \"olist_orders.Total Orders\", \"QueryRef\": \"olist_orders.Total Orders\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Top Customer States by Orders'\"}}}}}]}}}"
+        },
+        {
+          "id": 13,
+          "x": 906,
+          "y": 430,
+          "z": 13,
+          "width": 358,
+          "height": 274,
+          "config": "{\"name\": \"2124262006d44118a772\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 906, \"y\": 430, \"z\": 13, \"width\": 358, \"height\": 274}}], \"singleVisual\": {\"visualType\": \"gauge\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_orders.On-Time Rate %\", \"QueryRef\": \"olist_orders.On-Time Rate %\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'On-Time Delivery SLA (vs 90% Target)'\"}}}}}]}}}"
+        }
+      ]
+    },
+    {
+      "name": "sec_category_seller",
+      "displayName": "Category & Seller Concentration",
+      "width": 1280,
+      "height": 720,
+      "visualContainers": [
+        {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "width": 1280,
+          "height": 56,
+          "config": "{\"name\": \"729d9d34f5ff4476a812\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 0, \"y\": 0, \"z\": 1, \"width\": 1280, \"height\": 56}}], \"singleVisual\": {\"visualType\": \"textbox\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": []}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Category & Seller Concentration \\u2014 Pareto Analysis'\"}}}}}]}}}"
+        },
+        {
+          "id": 2,
+          "x": 16,
+          "y": 68,
+          "z": 2,
+          "width": 760,
+          "height": 320,
+          "config": "{\"name\": \"da5ebbcfebea4921a5be\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 68, \"z\": 2, \"width\": 760, \"height\": 320}}], \"singleVisual\": {\"visualType\": \"lineClusteredColumnComboChart\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_products.category_english\", \"QueryRef\": \"olist_products.category_english\"}, {\"Name\": \"olist_order_payments.GMV\", \"QueryRef\": \"olist_order_payments.GMV\"}, {\"Name\": \"olist_products.Cumulative Category GMV %\", \"QueryRef\": \"olist_products.Cumulative Category GMV %\"}, {\"Name\": \"olist_products.Pareto 80% Cutoff\", \"QueryRef\": \"olist_products.Pareto 80% Cutoff\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Top 15 Categories by Revenue & Cumulative Pareto %'\"}}}}}]}}}"
+        },
+        {
+          "id": 3,
+          "x": 792,
+          "y": 68,
+          "z": 3,
+          "width": 472,
+          "height": 320,
+          "config": "{\"name\": \"8dc512ef71c4453d94ae\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 792, \"y\": 68, \"z\": 3, \"width\": 472, \"height\": 320}}], \"singleVisual\": {\"visualType\": \"scatterChart\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_sellers.seller_id\", \"QueryRef\": \"olist_sellers.seller_id\"}, {\"Name\": \"olist_order_payments.GMV\", \"QueryRef\": \"olist_order_payments.GMV\"}, {\"Name\": \"olist_order_reviews.Avg Rating\", \"QueryRef\": \"olist_order_reviews.Avg Rating\"}, {\"Name\": \"olist_orders.Total Orders\", \"QueryRef\": \"olist_orders.Total Orders\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Seller Performance Quadrant (GMV vs Rating)'\"}}}}}]}}}"
+        },
+        {
+          "id": 4,
+          "x": 16,
+          "y": 400,
+          "z": 4,
+          "width": 760,
+          "height": 304,
+          "config": "{\"name\": \"8bffcd8570b647c4a70c\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 400, \"z\": 4, \"width\": 760, \"height\": 304}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_sellers.seller_id\", \"QueryRef\": \"olist_sellers.seller_id\"}, {\"Name\": \"olist_sellers.seller_state\", \"QueryRef\": \"olist_sellers.seller_state\"}, {\"Name\": \"olist_order_payments.GMV\", \"QueryRef\": \"olist_order_payments.GMV\"}, {\"Name\": \"olist_orders.Total Orders\", \"QueryRef\": \"olist_orders.Total Orders\"}, {\"Name\": \"olist_order_reviews.Avg Rating\", \"QueryRef\": \"olist_order_reviews.Avg Rating\"}, {\"Name\": \"olist_sellers.seller_revenue_tier\", \"QueryRef\": \"olist_sellers.seller_revenue_tier\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Top 10 Marketplace Sellers Scorecard (Right-Click -> Drill-Through)'\"}}}}}]}}}"
+        },
+        {
+          "id": 5,
+          "x": 792,
+          "y": 400,
+          "z": 5,
+          "width": 472,
+          "height": 304,
+          "config": "{\"name\": \"7f5109dea192493eb7ef\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 792, \"y\": 400, \"z\": 5, \"width\": 472, \"height\": 304}}], \"singleVisual\": {\"visualType\": \"pivotTable\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_products.category_english\", \"QueryRef\": \"olist_products.category_english\"}, {\"Name\": \"olist_customers.customer_state\", \"QueryRef\": \"olist_customers.customer_state\"}, {\"Name\": \"olist_order_payments.AOV\", \"QueryRef\": \"olist_order_payments.AOV\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Category AOV Matrix by Top Customer States'\"}}}}}]}}}"
+        }
+      ]
+    },
+    {
+      "name": "sec_delivery_satisfaction",
+      "displayName": "Delivery vs Satisfaction",
+      "width": 1280,
+      "height": 720,
+      "visualContainers": [
+        {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "width": 1280,
+          "height": 56,
+          "config": "{\"name\": \"42562a5fde0a43fd9a6c\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 0, \"y\": 0, \"z\": 1, \"width\": 1280, \"height\": 56}}], \"singleVisual\": {\"visualType\": \"textbox\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": []}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Fulfillment SLA & Review Satisfaction Intelligence'\"}}}}}]}}}"
+        },
+        {
+          "id": 2,
+          "x": 16,
+          "y": 68,
+          "z": 2,
+          "width": 400,
+          "height": 310,
+          "config": "{\"name\": \"919924e76d6045708152\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 68, \"z\": 2, \"width\": 400, \"height\": 310}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_orders.delay_bucket\", \"QueryRef\": \"olist_orders.delay_bucket\"}, {\"Name\": \"olist_order_reviews.Avg Rating\", \"QueryRef\": \"olist_order_reviews.Avg Rating\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Delivery Delay Bucket vs Average Review Score'\"}}}}}]}}}"
+        },
+        {
+          "id": 3,
+          "x": 432,
+          "y": 68,
+          "z": 3,
+          "width": 410,
+          "height": 310,
+          "config": "{\"name\": \"29780b04c4164ea0af2c\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 432, \"y\": 68, \"z\": 3, \"width\": 410, \"height\": 310}}], \"singleVisual\": {\"visualType\": \"clusteredColumnChart\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_order_reviews.review_score\", \"QueryRef\": \"olist_order_reviews.review_score\"}, {\"Name\": \"olist_order_reviews.Total Reviews\", \"QueryRef\": \"olist_order_reviews.Total Reviews\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Review Score Distribution (1 to 5 Stars)'\"}}}}}]}}}"
+        },
+        {
+          "id": 4,
+          "x": 858,
+          "y": 68,
+          "z": 4,
+          "width": 406,
+          "height": 310,
+          "config": "{\"name\": \"41e6900e08ff448c9b13\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 858, \"y\": 68, \"z\": 4, \"width\": 406, \"height\": 310}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"DimDate.YearMonth\", \"QueryRef\": \"DimDate.YearMonth\"}, {\"Name\": \"olist_orders.Total Orders\", \"QueryRef\": \"olist_orders.Total Orders\"}, {\"Name\": \"olist_orders.Late Deliveries\", \"QueryRef\": \"olist_orders.Late Deliveries\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Monthly Delivered vs Late Order Trend'\"}}}}}]}}}"
+        },
+        {
+          "id": 5,
+          "x": 16,
+          "y": 394,
+          "z": 5,
+          "width": 400,
+          "height": 310,
+          "config": "{\"name\": \"b388ec0a7ae647ccafba\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 394, \"z\": 5, \"width\": 400, \"height\": 310}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_sellers.seller_state\", \"QueryRef\": \"olist_sellers.seller_state\"}, {\"Name\": \"olist_orders.Avg Delivery Days\", \"QueryRef\": \"olist_orders.Avg Delivery Days\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Average Door-to-Door Transit Days by Seller State'\"}}}}}]}}}"
+        },
+        {
+          "id": 6,
+          "x": 432,
+          "y": 394,
+          "z": 6,
+          "width": 832,
+          "height": 310,
+          "config": "{\"name\": \"70fc97bd2d3943bdafd3\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 432, \"y\": 394, \"z\": 6, \"width\": 832, \"height\": 310}}], \"singleVisual\": {\"visualType\": \"pivotTable\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"v_cohort_retention.cohort_month\", \"QueryRef\": \"v_cohort_retention.cohort_month\"}, {\"Name\": \"v_cohort_retention.month_index\", \"QueryRef\": \"v_cohort_retention.month_index\"}, {\"Name\": \"v_cohort_retention.retention_rate_pct\", \"QueryRef\": \"v_cohort_retention.retention_rate_pct\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Monthly Cohort Customer Retention Grid (%)'\"}}}}}]}}}"
+        }
+      ]
+    },
+    {
+      "name": "sec_seller_drillthrough",
+      "displayName": "Seller Detail (Drill-Through)",
+      "width": 1280,
+      "height": 720,
+      "visualContainers": [
+        {
+          "id": 1,
+          "x": 16,
+          "y": 16,
+          "z": 1,
+          "width": 120,
+          "height": 36,
+          "config": "{\"name\": \"f9dcb50556d141658ca9\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 16, \"z\": 1, \"width\": 120, \"height\": 36}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": []}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Back to Overview'\"}}}}}]}}}"
+        },
+        {
+          "id": 2,
+          "x": 150,
+          "y": 16,
+          "z": 2,
+          "width": 1114,
+          "height": 36,
+          "config": "{\"name\": \"ce85c7c703454e3193fb\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 150, \"y\": 16, \"z\": 2, \"width\": 1114, \"height\": 36}}], \"singleVisual\": {\"visualType\": \"textbox\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": []}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Merchant Drill-Through Profile'\"}}}}}]}}}"
+        },
+        {
+          "id": 3,
+          "x": 16,
+          "y": 68,
+          "z": 3,
+          "width": 240,
+          "height": 100,
+          "config": "{\"name\": \"948efde54f344bfc815a\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 68, \"z\": 3, \"width\": 240, \"height\": 100}}], \"singleVisual\": {\"visualType\": \"cardVisual\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_order_payments.GMV\", \"QueryRef\": \"olist_order_payments.GMV\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Seller GMV'\"}}}}}]}}}"
+        },
+        {
+          "id": 4,
+          "x": 272,
+          "y": 68,
+          "z": 4,
+          "width": 240,
+          "height": 100,
+          "config": "{\"name\": \"4955aa31163845618eae\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 272, \"y\": 68, \"z\": 4, \"width\": 240, \"height\": 100}}], \"singleVisual\": {\"visualType\": \"cardVisual\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_orders.Total Orders\", \"QueryRef\": \"olist_orders.Total Orders\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Delivered Orders'\"}}}}}]}}}"
+        },
+        {
+          "id": 5,
+          "x": 528,
+          "y": 68,
+          "z": 5,
+          "width": 240,
+          "height": 100,
+          "config": "{\"name\": \"e10be20471a0490f9952\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 528, \"y\": 68, \"z\": 5, \"width\": 240, \"height\": 100}}], \"singleVisual\": {\"visualType\": \"cardVisual\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_order_reviews.Avg Rating\", \"QueryRef\": \"olist_order_reviews.Avg Rating\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Seller Rating'\"}}}}}]}}}"
+        },
+        {
+          "id": 6,
+          "x": 784,
+          "y": 68,
+          "z": 6,
+          "width": 240,
+          "height": 100,
+          "config": "{\"name\": \"68fa049b9fd645b68486\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 784, \"y\": 68, \"z\": 6, \"width\": 240, \"height\": 100}}], \"singleVisual\": {\"visualType\": \"cardVisual\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_orders.Late Delivery Rate\", \"QueryRef\": \"olist_orders.Late Delivery Rate\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Late Delivery Rate'\"}}}}}]}}}"
+        },
+        {
+          "id": 7,
+          "x": 1040,
+          "y": 68,
+          "z": 7,
+          "width": 224,
+          "height": 100,
+          "config": "{\"name\": \"f9be4951f3454a8e880e\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 1040, \"y\": 68, \"z\": 7, \"width\": 224, \"height\": 100}}], \"singleVisual\": {\"visualType\": \"cardVisual\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_sellers.seller_state\", \"QueryRef\": \"olist_sellers.seller_state\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'State'\"}}}}}]}}}"
+        },
+        {
+          "id": 8,
+          "x": 16,
+          "y": 184,
+          "z": 8,
+          "width": 620,
+          "height": 250,
+          "config": "{\"name\": \"1fef09d9ac1b4128a848\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 184, \"z\": 8, \"width\": 620, \"height\": 250}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"DimDate.YearMonth\", \"QueryRef\": \"DimDate.YearMonth\"}, {\"Name\": \"olist_order_payments.GMV\", \"QueryRef\": \"olist_order_payments.GMV\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Monthly Revenue History'\"}}}}}]}}}"
+        },
+        {
+          "id": 9,
+          "x": 652,
+          "y": 184,
+          "z": 9,
+          "width": 612,
+          "height": 250,
+          "config": "{\"name\": \"d1041a55aeca4b608279\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 652, \"y\": 184, \"z\": 9, \"width\": 612, \"height\": 250}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"olist_products.category_english\", \"QueryRef\": \"olist_products.category_english\"}, {\"Name\": \"olist_order_payments.GMV\", \"QueryRef\": \"olist_order_payments.GMV\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Top Product Categories Sold'\"}}}}}]}}}"
+        },
+        {
+          "id": 10,
+          "x": 16,
+          "y": 450,
+          "z": 10,
+          "width": 1248,
+          "height": 254,
+          "config": "{\"name\": \"cf00ccd20769418fbdae\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 16, \"y\": 450, \"z\": 10, \"width\": 1248, \"height\": 254}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {}, \"prototypeQuery\": {\"Version\": 2, \"From\": [], \"Select\": [{\"Name\": \"fact_sales.order_id\", \"QueryRef\": \"fact_sales.order_id\"}, {\"Name\": \"fact_sales.order_date\", \"QueryRef\": \"fact_sales.order_date\"}, {\"Name\": \"fact_sales.revenue\", \"QueryRef\": \"fact_sales.revenue\"}, {\"Name\": \"fact_sales.delay_days\", \"QueryRef\": \"fact_sales.delay_days\"}, {\"Name\": \"fact_sales.review_score\", \"QueryRef\": \"fact_sales.review_score\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Order Transaction History & Customer Reviews'\"}}}}}]}}}"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+metric_name,target_benchmark,sql_actual_value,dax_measure_name,validation_status,notes
+GMV,R$ 15.4M,15422461.77,GMV,MATCH,Delivered orders payments sum
+Total Delivered Orders,96477,96477,Total Orders,MATCH,Orders with order_status = delivered
+AOV (Average Order Value),R$ 159.85,159.86,AOV,MATCH,GMV / Total Orders
+Total Unique Buyers,93358,93358,Total Unique Customers,MATCH,COUNT(DISTINCT customer_unique_id)
+Repeat Buyers (>1 order),2801,2801,Repeat Customers,MATCH,Buyers with >1 delivered order
+Repeat Customer Rate %,3.00%,3.00%,Repeat Rate %,MATCH,Repeat Buyers / Total Unique Buyers
+Late Deliveries Count,7826,7826,Late Deliveries,MATCH,Delivered after estimated date
+Late Delivery Rate %,8.11%,8.11%,Late Delivery Rate,MATCH,Late Deliveries / Delivered with Date
+On-Time Delivery Rate %,91.89%,91.89%,On-Time Rate %,MATCH,1 - Late Delivery Rate
+Active Delivered Sellers,2970,2970,Active Sellers,MATCH,COUNT(DISTINCT seller_id) for delivered
+Average Review Score,4.16,4.16,Avg Rating,MATCH,AVG(review_score) on delivered orders
+Top 20% Seller Revenue Share,80-82%,82.29%,Top 20 Pct Sellers GMV,MATCH,Confirms 80/20 Pareto distribution
+

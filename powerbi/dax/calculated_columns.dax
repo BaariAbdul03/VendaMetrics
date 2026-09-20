@@ -1,0 +1,97 @@
+// ==============================================================================
+// CALCULATED COLUMNS (DAX)
+// Project: Olist E-Commerce Analytics (Power BI Star Schema)
+// ==============================================================================
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Table: olist_customers
+// ──────────────────────────────────────────────────────────────────────────────
+
+/// Flags repeat customers based on customer_unique_id (1 if >1 order, else 0).
+Repeat_Purchases = 
+CALCULATE(
+    IF(COUNT(olist_orders[order_id]) > 1, 1, 0),
+    ALLEXCEPT(olist_customers, olist_customers[customer_unique_id])
+)
+
+/// Exact delivered order count per unique buyer
+Total_Orders_By_Unique_Buyer = 
+CALCULATE(
+    COUNTROWS(olist_orders),
+    ALLEXCEPT(olist_customers, olist_customers[customer_unique_id]),
+    olist_orders[order_status] = "delivered"
+)
+
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Table: olist_orders
+// ──────────────────────────────────────────────────────────────────────────────
+
+/// Binary late delivery flag (1 = late, 0 = on-time/early)
+is_late = 
+IF(
+    NOT(ISBLANK(olist_orders[order_delivered_customer_date])) && 
+    olist_orders[order_delivered_customer_date] > olist_orders[order_estimated_delivery_date],
+    1,
+    0
+)
+
+/// Days delayed past estimated delivery date (positive = late, negative = early)
+delay_days = 
+IF(
+    NOT(ISBLANK(olist_orders[order_delivered_customer_date])),
+    DATEDIFF(olist_orders[order_estimated_delivery_date], olist_orders[order_delivered_customer_date], DAY),
+    BLANK()
+)
+
+/// Transit days from purchase to customer doorstep
+transit_days = 
+IF(
+    NOT(ISBLANK(olist_orders[order_delivered_customer_date])),
+    DATEDIFF(olist_orders[order_purchase_timestamp], olist_orders[order_delivered_customer_date], DAY),
+    BLANK()
+)
+
+/// Delivery performance bucket for visual categorization
+delay_bucket = 
+SWITCH(
+    TRUE(),
+    ISBLANK(olist_orders[order_delivered_customer_date]), "Undelivered",
+    olist_orders[delay_days] <= -7, "Early (>7d)",
+    olist_orders[delay_days] <= 0, "On-time (0-7d early)",
+    olist_orders[delay_days] <= 3, "Slightly Late (1-3d)",
+    olist_orders[delay_days] <= 7, "Late (4-7d)",
+    "Very Late (>7d)"
+)
+
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Table: olist_order_reviews
+// ──────────────────────────────────────────────────────────────────────────────
+
+/// Review sentiment tier
+review_sentiment = 
+SWITCH(
+    TRUE(),
+    olist_order_reviews[review_score] >= 4, "Positive (4-5★)",
+    olist_order_reviews[review_score] = 3, "Neutral (3★)",
+    "Negative (1-2★)"
+)
+
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Table: olist_sellers
+// ──────────────────────────────────────────────────────────────────────────────
+
+/// Seller revenue segmentation tier based on total delivered product price
+seller_revenue_tier = 
+VAR Rev = CALCULATE(SUM(olist_order_items[price]), olist_orders[order_status] = "delivered")
+RETURN
+    SWITCH(
+        TRUE(),
+        Rev >= 50000, "Tier 1: Top (>R$50k)",
+        Rev >= 20000, "Tier 2: Mid (R$20k-R$50k)",
+        Rev >= 5000,  "Tier 3: Small (R$5k-R$20k)",
+        "Tier 4: Long Tail (<R$5k)"
+    )
+

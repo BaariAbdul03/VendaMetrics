@@ -1,0 +1,14 @@
+relationship_id,from_table,from_column,to_table,to_column,cardinality,cross_filtering_behavior,is_active,business_description
+R1,fact_sales,order_date,DimDate,Date,ManyToOne,oneDirection,TRUE,Time intelligence and date filtering
+R2,fact_sales,order_id,olist_orders,order_id,ManyToOne,oneDirection,TRUE,Connects item sales to order header
+R3,fact_sales,product_id,olist_products,product_id,ManyToOne,oneDirection,TRUE,Category and product dimension slicing
+R4,fact_sales,seller_id,olist_sellers,seller_id,ManyToOne,oneDirection,TRUE,Seller scorecard and seller state slicing
+R5,olist_orders,customer_id,olist_customers,customer_id,ManyToOne,oneDirection,TRUE,Customer demographics and retention
+R6,olist_order_payments,order_id,olist_orders,order_id,ManyToOne,oneDirection,TRUE,Payment methods and installments breakdown
+R7,olist_order_reviews,order_id,olist_orders,order_id,ManyToOne,oneDirection,TRUE,Review ratings and satisfaction
+R8,olist_orders,order_purchase_date,DimDate,Date,ManyToOne,oneDirection,TRUE,Order volume timeline
+R9,olist_orders,order_delivered_customer_date,DimDate,Date,ManyToOne,oneDirection,FALSE,Delivery SLA fulfillment date (USERELATIONSHIP)
+R10,olist_orders,order_estimated_delivery_date,DimDate,Date,ManyToOne,oneDirection,FALSE,Estimated SLA promise date (USERELATIONSHIP)
+R11,olist_customers,customer_zip_code_prefix,olist_geolocation,geolocation_zip_code_prefix,ManyToOne,oneDirection,TRUE,Customer geolocation mapping
+R12,olist_sellers,seller_zip_code_prefix,olist_geolocation,geolocation_zip_code_prefix,ManyToOne,oneDirection,FALSE,Seller geolocation mapping
+

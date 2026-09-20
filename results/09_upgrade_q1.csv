@@ -1,0 +1,6 @@
+delivery_bucket,total_orders,avg_review_score,pct_5_star,pct_1_star
+1. Early (>7d),76175,4.31,63.4,6.5
+2. Early/On-time (0-7d),13769,4.16,56.2,7.4
+3. Slightly Late (1-3d),1856,3.29,33.1,25.2
+4. Late (4-7d),1756,2.10,14.1,58.5
+5. Very Late (>7d),2797,1.70,7.0,69.7

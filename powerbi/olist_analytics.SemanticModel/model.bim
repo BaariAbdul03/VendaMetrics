@@ -1,0 +1,844 @@
+{
+  "name": "olist_analytics",
+  "compatibilityLevel": 1567,
+  "model": {
+    "culture": "en-US",
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "tables": [
+      {
+        "name": "DimDate",
+        "columns": [
+          {
+            "name": "Date",
+            "dataType": "dateTime",
+            "isKey": true,
+            "formatString": "yyyy-MM-dd"
+          },
+          {
+            "name": "DateKey",
+            "dataType": "int64"
+          },
+          {
+            "name": "Year",
+            "dataType": "int64"
+          },
+          {
+            "name": "Quarter",
+            "dataType": "string"
+          },
+          {
+            "name": "YearQuarter",
+            "dataType": "string"
+          },
+          {
+            "name": "MonthNumber",
+            "dataType": "int64"
+          },
+          {
+            "name": "MonthName",
+            "dataType": "string"
+          },
+          {
+            "name": "MonthShort",
+            "dataType": "string"
+          },
+          {
+            "name": "YearMonth",
+            "dataType": "string",
+            "sortByColumn": "DateKey"
+          },
+          {
+            "name": "DayOfMonth",
+            "dataType": "int64"
+          },
+          {
+            "name": "DayOfWeekNumber",
+            "dataType": "int64"
+          },
+          {
+            "name": "DayOfWeekName",
+            "dataType": "string"
+          },
+          {
+            "name": "IsWeekend",
+            "dataType": "boolean"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "DimDate-Partition",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    StartDate = #date(2016, 1, 1),",
+                "    EndDate = #date(2018, 12, 31),",
+                "    DayCount = Duration.Days(EndDate - StartDate) + 1,",
+                "    DateList = List.Dates(StartDate, DayCount, #duration(1, 0, 0, 0)),",
+                "    TableFromList = Table.FromList(DateList, Splitter.SplitByNothing(), {\"Date\"}, null, ExtraValues.Error),",
+                "    ChangedType = Table.TransformColumnTypes(TableFromList, {{\"Date\", type date}}),",
+                "    AddDateKey = Table.AddColumn(ChangedType, \"DateKey\", each Date.Year([Date]) * 10000 + Date.Month([Date]) * 100 + Date.Day([Date]), Int64.Type),",
+                "    AddYear = Table.AddColumn(AddDateKey, \"Year\", each Date.Year([Date]), Int64.Type),",
+                "    AddQuarter = Table.AddColumn(AddYear, \"Quarter\", each \"Q\" & Text.From(Date.QuarterOfYear([Date])), type text),",
+                "    AddYearQuarter = Table.AddColumn(AddQuarter, \"YearQuarter\", each Text.From([Year]) & \"-Q\" & Text.From(Date.QuarterOfYear([Date])), type text),",
+                "    AddMonth = Table.AddColumn(AddYearQuarter, \"MonthNumber\", each Date.Month([Date]), Int64.Type),",
+                "    AddMonthName = Table.AddColumn(AddMonth, \"MonthName\", each Date.MonthName([Date]), type text),",
+                "    AddMonthShort = Table.AddColumn(AddMonthName, \"MonthShort\", each Text.Start([MonthName], 3), type text),",
+                "    AddYearMonth = Table.AddColumn(AddMonthShort, \"YearMonth\", each Text.From([Year]) & \"-\" & Text.PadStart(Text.From([MonthNumber]), 2, \"0\"), type text),",
+                "    AddDay = Table.AddColumn(AddYearMonth, \"DayOfMonth\", each Date.Day([Date]), Int64.Type),",
+                "    AddDayOfWeek = Table.AddColumn(AddDay, \"DayOfWeekNumber\", each Date.DayOfWeek([Date], Day.Monday) + 1, Int64.Type),",
+                "    AddDayName = Table.AddColumn(AddDayOfWeek, \"DayOfWeekName\", each Date.DayOfWeekName([Date]), type text),",
+                "    AddIsWeekend = Table.AddColumn(AddDayName, \"IsWeekend\", each if [DayOfWeekNumber] >= 6 then true else false, type logical)",
+                "in",
+                "    AddIsWeekend"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "olist_customers",
+        "columns": [
+          {
+            "name": "customer_id",
+            "dataType": "string",
+            "isKey": true
+          },
+          {
+            "name": "customer_unique_id",
+            "dataType": "string"
+          },
+          {
+            "name": "customer_zip_code_prefix",
+            "dataType": "string"
+          },
+          {
+            "name": "customer_city",
+            "dataType": "string"
+          },
+          {
+            "name": "customer_state",
+            "dataType": "string"
+          },
+          {
+            "name": "Repeat_Purchases",
+            "dataType": "int64",
+            "type": "calculated",
+            "expression": "CALCULATE(IF(COUNT(olist_orders[order_id]) > 1, 1, 0), ALLEXCEPT(olist_customers, olist_customers[customer_unique_id]))"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Total Unique Customers",
+            "expression": "CALCULATE(DISTINCTCOUNT(olist_customers[customer_unique_id]), olist_orders[order_status] = \"delivered\")",
+            "formatString": "#,##0",
+            "displayFolder": "02_Customers"
+          },
+          {
+            "name": "Repeat Customers",
+            "expression": "CALCULATE(DISTINCTCOUNT(olist_customers[customer_unique_id]), olist_customers[Repeat_Purchases] = 1, olist_orders[order_status] = \"delivered\")",
+            "formatString": "#,##0",
+            "displayFolder": "02_Customers"
+          },
+          {
+            "name": "Repeat Rate %",
+            "expression": "DIVIDE([Repeat Customers], [Total Unique Customers], 0)",
+            "formatString": "0.00%",
+            "displayFolder": "02_Customers"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "olist_customers-Partition",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = MySQL.Database(\"localhost:3306\", \"olist_ecommerce\", [ReturnSingleDatabase=true]),",
+                "    customers_table = Source{[Schema=\"olist_ecommerce\", Item=\"customers\"]}[Data],",
+                "    TypedColumns = Table.TransformColumnTypes(customers_table, {{\"customer_id\", type text}, {\"customer_unique_id\", type text}, {\"customer_zip_code_prefix\", type text}, {\"customer_city\", type text}, {\"customer_state\", type text}})",
+                "in",
+                "    TypedColumns"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "olist_orders",
+        "columns": [
+          {
+            "name": "order_id",
+            "dataType": "string",
+            "isKey": true
+          },
+          {
+            "name": "customer_id",
+            "dataType": "string"
+          },
+          {
+            "name": "order_status",
+            "dataType": "string"
+          },
+          {
+            "name": "order_purchase_timestamp",
+            "dataType": "dateTime"
+          },
+          {
+            "name": "order_purchase_date",
+            "dataType": "dateTime",
+            "formatString": "yyyy-MM-dd"
+          },
+          {
+            "name": "order_approved_at",
+            "dataType": "dateTime"
+          },
+          {
+            "name": "order_delivered_carrier_date",
+            "dataType": "dateTime"
+          },
+          {
+            "name": "order_delivered_customer_date",
+            "dataType": "dateTime"
+          },
+          {
+            "name": "order_estimated_delivery_date",
+            "dataType": "dateTime"
+          },
+          {
+            "name": "is_late",
+            "dataType": "int64",
+            "type": "calculated",
+            "expression": "IF(NOT(ISBLANK(olist_orders[order_delivered_customer_date])) && olist_orders[order_delivered_customer_date] > olist_orders[order_estimated_delivery_date], 1, 0)"
+          },
+          {
+            "name": "delay_days",
+            "dataType": "int64",
+            "type": "calculated",
+            "expression": "IF(NOT(ISBLANK(olist_orders[order_delivered_customer_date])), DATEDIFF(olist_orders[order_estimated_delivery_date], olist_orders[order_delivered_customer_date], DAY), BLANK())"
+          },
+          {
+            "name": "delay_bucket",
+            "dataType": "string",
+            "type": "calculated",
+            "expression": "SWITCH(TRUE(), ISBLANK(olist_orders[order_delivered_customer_date]), \"Undelivered\", olist_orders[delay_days] <= -7, \"Early (>7d)\", olist_orders[delay_days] <= 0, \"On-time (0-7d early)\", olist_orders[delay_days] <= 3, \"Slightly Late (1-3d)\", olist_orders[delay_days] <= 7, \"Late (4-7d)\", \"Very Late (>7d)\")"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Total Orders",
+            "expression": "CALCULATE(COUNTROWS(olist_orders), olist_orders[order_status] = \"delivered\")",
+            "formatString": "#,##0",
+            "displayFolder": "01_Revenue"
+          },
+          {
+            "name": "Late Deliveries",
+            "expression": "CALCULATE(COUNTROWS(olist_orders), olist_orders[order_status] = \"delivered\", olist_orders[order_delivered_customer_date] > olist_orders[order_estimated_delivery_date])",
+            "formatString": "#,##0",
+            "displayFolder": "03_Delivery"
+          },
+          {
+            "name": "Late Delivery Rate",
+            "expression": "DIVIDE([Late Deliveries], CALCULATE(COUNTROWS(olist_orders), olist_orders[order_status] = \"delivered\", NOT(ISBLANK(olist_orders[order_delivered_customer_date]))), 0)",
+            "formatString": "0.00%",
+            "displayFolder": "03_Delivery"
+          },
+          {
+            "name": "On-Time Rate %",
+            "expression": "1 - [Late Delivery Rate]",
+            "formatString": "0.00%",
+            "displayFolder": "03_Delivery"
+          },
+          {
+            "name": "Avg Delivery Days",
+            "expression": "AVERAGEX(FILTER(olist_orders, olist_orders[order_status] = \"delivered\" && NOT(ISBLANK(olist_orders[order_delivered_customer_date]))), DATEDIFF(olist_orders[order_purchase_timestamp], olist_orders[order_delivered_customer_date], DAY))",
+            "formatString": "0.0",
+            "displayFolder": "03_Delivery"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "olist_orders-Partition",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = MySQL.Database(\"localhost:3306\", \"olist_ecommerce\", [ReturnSingleDatabase=true]),",
+                "    orders_table = Source{[Schema=\"olist_ecommerce\", Item=\"orders\"]}[Data],",
+                "    TypedColumns = Table.TransformColumnTypes(orders_table, {{\"order_id\", type text}, {\"customer_id\", type text}, {\"order_status\", type text}, {\"order_purchase_timestamp\", type datetime}, {\"order_approved_at\", type datetime}, {\"order_delivered_carrier_date\", type datetime}, {\"order_delivered_customer_date\", type datetime}, {\"order_estimated_delivery_date\", type datetime}}),",
+                "    AddPurchaseDate = Table.AddColumn(TypedColumns, \"order_purchase_date\", each DateTime.Date([order_purchase_timestamp]), type date)",
+                "in",
+                "    AddPurchaseDate"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "olist_products",
+        "columns": [
+          {
+            "name": "product_id",
+            "dataType": "string",
+            "isKey": true
+          },
+          {
+            "name": "product_category_name",
+            "dataType": "string"
+          },
+          {
+            "name": "category_english",
+            "dataType": "string"
+          },
+          {
+            "name": "product_weight_g",
+            "dataType": "double"
+          },
+          {
+            "name": "product_length_cm",
+            "dataType": "double"
+          },
+          {
+            "name": "product_height_cm",
+            "dataType": "double"
+          },
+          {
+            "name": "product_width_cm",
+            "dataType": "double"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Cumulative Category GMV %",
+            "expression": "VAR CurrentCatRev = [GMV] VAR TotalCatRev = CALCULATE([GMV], ALLSELECTED(olist_products[category_english])) VAR RunningTotal = CALCULATE([GMV], FILTER(ALLSELECTED(olist_products[category_english]), [GMV] >= CurrentCatRev)) RETURN DIVIDE(RunningTotal, TotalCatRev, 0)",
+            "formatString": "0.00%",
+            "displayFolder": "06_Category"
+          },
+          {
+            "name": "Pareto 80% Cutoff",
+            "expression": "0.80",
+            "formatString": "0.00%",
+            "displayFolder": "06_Category"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "olist_products-Partition",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = MySQL.Database(\"localhost:3306\", \"olist_ecommerce\", [ReturnSingleDatabase=true]),",
+                "    products_table = Source{[Schema=\"olist_ecommerce\", Item=\"products\"]}[Data],",
+                "    translation_table = Source{[Schema=\"olist_ecommerce\", Item=\"product_category_translation\"]}[Data],",
+                "    TypedProducts = Table.TransformColumnTypes(products_table, {{\"product_id\", type text}, {\"product_category_name\", type text}, {\"product_weight_g\", type number}, {\"product_length_cm\", type number}, {\"product_height_cm\", type number}, {\"product_width_cm\", type number}}),",
+                "    MergedTranslation = Table.NestedJoin(TypedProducts, {\"product_category_name\"}, translation_table, {\"product_category_name\"}, \"CategoryTranslation\", JoinKind.LeftOuter),",
+                "    ExpandedTranslation = Table.ExpandTableColumn(MergedTranslation, \"CategoryTranslation\", {\"product_category_name_english\"}, {\"product_category_name_english\"}),",
+                "    CoalesceCategory = Table.AddColumn(ExpandedTranslation, \"category_english\", each if [product_category_name_english] <> null then Text.Proper(Text.Replace([product_category_name_english], \"_\", \" \")) else \"Unknown / Other\", type text),",
+                "    FinalProducts = Table.RemoveColumns(CoalesceCategory, {\"product_category_name_english\"})",
+                "in",
+                "    FinalProducts"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "olist_sellers",
+        "columns": [
+          {
+            "name": "seller_id",
+            "dataType": "string",
+            "isKey": true
+          },
+          {
+            "name": "seller_zip_code_prefix",
+            "dataType": "string"
+          },
+          {
+            "name": "seller_city",
+            "dataType": "string"
+          },
+          {
+            "name": "seller_state",
+            "dataType": "string"
+          },
+          {
+            "name": "seller_revenue_tier",
+            "dataType": "string",
+            "type": "calculated",
+            "expression": "VAR Rev = CALCULATE(SUM(olist_order_items[price]), olist_orders[order_status] = \"delivered\") RETURN SWITCH(TRUE(), Rev >= 50000, \"Tier 1: Top (>R$50k)\", Rev >= 20000, \"Tier 2: Mid (R$20k-R$50k)\", Rev >= 5000, \"Tier 3: Small (R$5k-R$20k)\", \"Tier 4: Long Tail (<R$5k)\")"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Active Sellers",
+            "expression": "CALCULATE(DISTINCTCOUNT(olist_order_items[seller_id]), olist_orders[order_status] = \"delivered\")",
+            "formatString": "#,##0",
+            "displayFolder": "05_Sellers"
+          },
+          {
+            "name": "Top 10 Sellers GMV",
+            "expression": "CALCULATE([GMV], TOPN(10, ALLSELECTED(olist_sellers[seller_id]), [GMV], DESC))",
+            "formatString": "R$ #,##0.00",
+            "displayFolder": "05_Sellers"
+          },
+          {
+            "name": "Top 10 Sellers Share %",
+            "expression": "DIVIDE([Top 10 Sellers GMV], [GMV], 0)",
+            "formatString": "0.00%",
+            "displayFolder": "05_Sellers"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "olist_sellers-Partition",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = MySQL.Database(\"localhost:3306\", \"olist_ecommerce\", [ReturnSingleDatabase=true]),",
+                "    sellers_table = Source{[Schema=\"olist_ecommerce\", Item=\"sellers\"]}[Data],",
+                "    TypedColumns = Table.TransformColumnTypes(sellers_table, {{\"seller_id\", type text}, {\"seller_zip_code_prefix\", type text}, {\"seller_city\", type text}, {\"seller_state\", type text}})",
+                "in",
+                "    TypedColumns"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "olist_order_items",
+        "columns": [
+          {
+            "name": "order_id",
+            "dataType": "string"
+          },
+          {
+            "name": "order_item_id",
+            "dataType": "int64"
+          },
+          {
+            "name": "product_id",
+            "dataType": "string"
+          },
+          {
+            "name": "seller_id",
+            "dataType": "string"
+          },
+          {
+            "name": "price",
+            "dataType": "decimal",
+            "formatString": "R$ #,##0.00"
+          },
+          {
+            "name": "freight_value",
+            "dataType": "decimal",
+            "formatString": "R$ #,##0.00"
+          },
+          {
+            "name": "item_revenue",
+            "dataType": "decimal",
+            "formatString": "R$ #,##0.00"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Product Sales Revenue",
+            "expression": "CALCULATE(SUM(olist_order_items[price]), olist_orders[order_status] = \"delivered\")",
+            "formatString": "R$ #,##0.00",
+            "displayFolder": "01_Revenue"
+          },
+          {
+            "name": "Freight Revenue",
+            "expression": "CALCULATE(SUM(olist_order_items[freight_value]), olist_orders[order_status] = \"delivered\")",
+            "formatString": "R$ #,##0.00",
+            "displayFolder": "01_Revenue"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "olist_order_items-Partition",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = MySQL.Database(\"localhost:3306\", \"olist_ecommerce\", [ReturnSingleDatabase=true]),",
+                "    order_items_table = Source{[Schema=\"olist_ecommerce\", Item=\"order_items\"]}[Data],",
+                "    TypedColumns = Table.TransformColumnTypes(order_items_table, {{\"order_id\", type text}, {\"order_item_id\", Int64.Type}, {\"product_id\", type text}, {\"seller_id\", type text}, {\"price\", Currency.Type}, {\"freight_value\", Currency.Type}}),",
+                "    AddRev = Table.AddColumn(TypedColumns, \"item_revenue\", each [price] + [freight_value], Currency.Type)",
+                "in",
+                "    AddRev"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "olist_order_payments",
+        "columns": [
+          {
+            "name": "order_id",
+            "dataType": "string"
+          },
+          {
+            "name": "payment_sequential",
+            "dataType": "int64"
+          },
+          {
+            "name": "payment_type",
+            "dataType": "string"
+          },
+          {
+            "name": "payment_installments",
+            "dataType": "int64"
+          },
+          {
+            "name": "payment_value",
+            "dataType": "decimal",
+            "formatString": "R$ #,##0.00"
+          }
+        ],
+        "measures": [
+          {
+            "name": "GMV",
+            "expression": "CALCULATE(SUM(olist_order_payments[payment_value]), olist_orders[order_status] = \"delivered\")",
+            "formatString": "R$ #,##0.00",
+            "displayFolder": "01_Revenue"
+          },
+          {
+            "name": "AOV",
+            "expression": "DIVIDE([GMV], [Total Orders], 0)",
+            "formatString": "R$ #,##0.00",
+            "displayFolder": "01_Revenue"
+          },
+          {
+            "name": "MoM Revenue Growth",
+            "expression": "VAR CurrentMonthRev = [GMV] VAR PrevMonthRev = CALCULATE([GMV], DATEADD(DimDate[Date], -1, MONTH)) RETURN DIVIDE(CurrentMonthRev - PrevMonthRev, PrevMonthRev, 0)",
+            "formatString": "0.00%",
+            "displayFolder": "01_Revenue"
+          },
+          {
+            "name": "YoY Revenue Growth",
+            "expression": "VAR CurrentYearRev = [GMV] VAR PrevYearRev = CALCULATE([GMV], SAMEPERIODLASTYEAR(DimDate[Date])) RETURN DIVIDE(CurrentYearRev - PrevYearRev, PrevYearRev, 0)",
+            "formatString": "0.00%",
+            "displayFolder": "01_Revenue"
+          },
+          {
+            "name": "YTD Revenue",
+            "expression": "TOTALYTD([GMV], DimDate[Date])",
+            "formatString": "R$ #,##0.00",
+            "displayFolder": "01_Revenue"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "olist_order_payments-Partition",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = MySQL.Database(\"localhost:3306\", \"olist_ecommerce\", [ReturnSingleDatabase=true]),",
+                "    payments_table = Source{[Schema=\"olist_ecommerce\", Item=\"order_payments\"]}[Data],",
+                "    TypedColumns = Table.TransformColumnTypes(payments_table, {{\"order_id\", type text}, {\"payment_sequential\", Int64.Type}, {\"payment_type\", type text}, {\"payment_installments\", Int64.Type}, {\"payment_value\", Currency.Type}})",
+                "in",
+                "    TypedColumns"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "olist_order_reviews",
+        "columns": [
+          {
+            "name": "review_id",
+            "dataType": "string",
+            "isKey": true
+          },
+          {
+            "name": "order_id",
+            "dataType": "string"
+          },
+          {
+            "name": "review_score",
+            "dataType": "int64"
+          },
+          {
+            "name": "review_creation_date",
+            "dataType": "dateTime"
+          },
+          {
+            "name": "review_sentiment",
+            "dataType": "string",
+            "type": "calculated",
+            "expression": "SWITCH(TRUE(), olist_order_reviews[review_score] >= 4, \"Positive (4-5\u2605)\", olist_order_reviews[review_score] = 3, \"Neutral (3\u2605)\", \"Negative (1-2\u2605)\")"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Avg Rating",
+            "expression": "AVERAGE(olist_order_reviews[review_score])",
+            "formatString": "0.00",
+            "displayFolder": "04_Satisfaction"
+          },
+          {
+            "name": "Total Reviews",
+            "expression": "COUNT(olist_order_reviews[review_score])",
+            "formatString": "#,##0",
+            "displayFolder": "04_Satisfaction"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "olist_order_reviews-Partition",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = MySQL.Database(\"localhost:3306\", \"olist_ecommerce\", [ReturnSingleDatabase=true]),",
+                "    reviews_table = Source{[Schema=\"olist_ecommerce\", Item=\"order_reviews\"]}[Data],",
+                "    TypedColumns = Table.TransformColumnTypes(reviews_table, {{\"review_id\", type text}, {\"order_id\", type text}, {\"review_score\", Int64.Type}, {\"review_creation_date\", type datetime}})",
+                "in",
+                "    TypedColumns"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "olist_geolocation",
+        "columns": [
+          {
+            "name": "geolocation_zip_code_prefix",
+            "dataType": "string",
+            "isKey": true
+          },
+          {
+            "name": "latitude",
+            "dataType": "double"
+          },
+          {
+            "name": "longitude",
+            "dataType": "double"
+          },
+          {
+            "name": "city",
+            "dataType": "string"
+          },
+          {
+            "name": "state",
+            "dataType": "string"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "olist_geolocation-Partition",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = MySQL.Database(\"localhost:3306\", \"olist_ecommerce\", [ReturnSingleDatabase=true]),",
+                "    geo_table = Source{[Schema=\"olist_ecommerce\", Item=\"geolocation\"]}[Data],",
+                "    TypedColumns = Table.TransformColumnTypes(geo_table, {{\"geolocation_zip_code_prefix\", type text}, {\"geolocation_lat\", type number}, {\"geolocation_lng\", type number}, {\"geolocation_city\", type text}, {\"geolocation_state\", type text}}),",
+                "    GroupedRows = Table.Group(TypedColumns, {\"geolocation_zip_code_prefix\"}, {{\"latitude\", each List.Average([geolocation_lat]), type number}, {\"longitude\", each List.Average([geolocation_lng]), type number}, {\"city\", each List.First([geolocation_city]), type text}, {\"state\", each List.First([geolocation_state]), type text}})",
+                "in",
+                "    GroupedRows"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_sales",
+        "columns": [
+          {
+            "name": "order_id",
+            "dataType": "string"
+          },
+          {
+            "name": "order_item_id",
+            "dataType": "int64"
+          },
+          {
+            "name": "product_id",
+            "dataType": "string"
+          },
+          {
+            "name": "seller_id",
+            "dataType": "string"
+          },
+          {
+            "name": "customer_id",
+            "dataType": "string"
+          },
+          {
+            "name": "customer_unique_id",
+            "dataType": "string"
+          },
+          {
+            "name": "order_status",
+            "dataType": "string"
+          },
+          {
+            "name": "order_purchase_timestamp",
+            "dataType": "dateTime"
+          },
+          {
+            "name": "order_date",
+            "dataType": "dateTime",
+            "formatString": "yyyy-MM-dd"
+          },
+          {
+            "name": "price",
+            "dataType": "decimal",
+            "formatString": "R$ #,##0.00"
+          },
+          {
+            "name": "freight_value",
+            "dataType": "decimal",
+            "formatString": "R$ #,##0.00"
+          },
+          {
+            "name": "revenue",
+            "dataType": "decimal",
+            "formatString": "R$ #,##0.00"
+          },
+          {
+            "name": "delay_days",
+            "dataType": "int64"
+          },
+          {
+            "name": "is_late",
+            "dataType": "int64"
+          },
+          {
+            "name": "review_score",
+            "dataType": "double"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Total Revenue (Fact)",
+            "expression": "SUM(fact_sales[revenue])",
+            "formatString": "R$ #,##0.00",
+            "displayFolder": "01_Revenue"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_sales-Partition",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = MySQL.Database(\"localhost:3306\", \"olist_ecommerce\", [ReturnSingleDatabase=true]),",
+                "    fact_table = Source{[Schema=\"olist_ecommerce\", Item=\"fact_sales\"]}[Data],",
+                "    TypedColumns = Table.TransformColumnTypes(fact_table, {{\"order_id\", type text}, {\"order_item_id\", Int64.Type}, {\"product_id\", type text}, {\"seller_id\", type text}, {\"customer_id\", type text}, {\"customer_unique_id\", type text}, {\"order_status\", type text}, {\"order_purchase_timestamp\", type datetime}, {\"order_date\", type date}, {\"price\", Currency.Type}, {\"freight_value\", Currency.Type}, {\"revenue\", Currency.Type}, {\"delay_days\", Int64.Type}, {\"is_late\", Int64.Type}, {\"review_score\", type number}})",
+                "in",
+                "    TypedColumns"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "R1_fact_sales_dimdate",
+        "fromTable": "fact_sales",
+        "fromColumn": "order_date",
+        "toTable": "DimDate",
+        "toColumn": "Date",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "R2_fact_sales_orders",
+        "fromTable": "fact_sales",
+        "fromColumn": "order_id",
+        "toTable": "olist_orders",
+        "toColumn": "order_id",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "R3_fact_sales_products",
+        "fromTable": "fact_sales",
+        "fromColumn": "product_id",
+        "toTable": "olist_products",
+        "toColumn": "product_id",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "R4_fact_sales_sellers",
+        "fromTable": "fact_sales",
+        "fromColumn": "seller_id",
+        "toTable": "olist_sellers",
+        "toColumn": "seller_id",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "R5_orders_customers",
+        "fromTable": "olist_orders",
+        "fromColumn": "customer_id",
+        "toTable": "olist_customers",
+        "toColumn": "customer_id",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "R6_payments_orders",
+        "fromTable": "olist_order_payments",
+        "fromColumn": "order_id",
+        "toTable": "olist_orders",
+        "toColumn": "order_id",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "R7_reviews_orders",
+        "fromTable": "olist_order_reviews",
+        "fromColumn": "order_id",
+        "toTable": "olist_orders",
+        "toColumn": "order_id",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "R8_orders_dimdate",
+        "fromTable": "olist_orders",
+        "fromColumn": "order_purchase_date",
+        "toTable": "DimDate",
+        "toColumn": "Date",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "R9_customers_geolocation",
+        "fromTable": "olist_customers",
+        "fromColumn": "customer_zip_code_prefix",
+        "toTable": "olist_geolocation",
+        "toColumn": "geolocation_zip_code_prefix",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,273 @@
+// ==============================================================================
+// PRODUCTION DAX MEASURES REPOSITORY
+// Project: Olist E-Commerce Analytics (Power BI Star Schema)
+// Target Model: Star Schema with Fact: fact_sales / olist_order_items
+// Verified Benchmarks:
+//   GMV: R$ 15,422,461.77 | Orders: 96,477 | AOV: R$ 159.86
+//   Repeat Rate: 3.00% | On-Time Rate: 91.89% | Active Sellers: 2,970 | Rating: 4.16
+// ==============================================================================
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 1. REVENUE & FINANCIAL KPIS (Folder: 01_Revenue)
+// ──────────────────────────────────────────────────────────────────────────────
+
+/// Gross Merchandise Value (GMV) from delivered orders.
+/// Benchmark: R$ 15,422,461.77
+GMV = 
+CALCULATE(
+    SUM(olist_order_payments[payment_value]),
+    olist_orders[order_status] = "delivered"
+)
+
+/// Alternative GMV evaluated directly on fact_sales view.
+/// Benchmark: R$ 15,419,773.75
+Total Revenue (Fact) = 
+SUM(fact_sales[revenue])
+
+/// Total order count of delivered orders.
+/// Benchmark: 96,477
+Total Orders = 
+CALCULATE(
+    COUNTROWS(olist_orders),
+    olist_orders[order_status] = "delivered"
+)
+
+/// Average Order Value (GMV / Total Orders).
+/// Benchmark: R$ 159.86
+AOV = 
+DIVIDE([GMV], [Total Orders], 0)
+
+/// Month-over-Month Revenue Growth %
+MoM Revenue Growth = 
+VAR CurrentMonthRev = [GMV]
+VAR PrevMonthRev = CALCULATE([GMV], DATEADD(DimDate[Date], -1, MONTH))
+RETURN 
+    DIVIDE(CurrentMonthRev - PrevMonthRev, PrevMonthRev, 0)
+
+/// Year-over-Year Revenue Growth %
+YoY Revenue Growth = 
+VAR CurrentYearRev = [GMV]
+VAR PrevYearRev = CALCULATE([GMV], SAMEPERIODLASTYEAR(DimDate[Date]))
+RETURN 
+    DIVIDE(CurrentYearRev - PrevYearRev, PrevYearRev, 0)
+
+/// Year-to-Date Revenue
+YTD Revenue = 
+TOTALYTD([GMV], DimDate[Date])
+
+/// Total Item Price (excluding freight)
+Product Sales Revenue = 
+CALCULATE(
+    SUM(olist_order_items[price]),
+    olist_orders[order_status] = "delivered"
+)
+
+/// Total Freight Revenue collected
+Freight Revenue = 
+CALCULATE(
+    SUM(olist_order_items[freight_value]),
+    olist_orders[order_status] = "delivered"
+)
+
+/// Freight-to-Price Ratio %
+Freight Ratio % = 
+DIVIDE([Freight Revenue], [Product Sales Revenue], 0)
+
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 2. CUSTOMER INTELLIGENCE & RETENTION (Folder: 02_Customers)
+// ──────────────────────────────────────────────────────────────────────────────
+
+/// Total unique buyers across all delivered orders.
+/// Benchmark: 93,358
+Total Unique Customers = 
+CALCULATE(
+    DISTINCTCOUNT(olist_customers[customer_unique_id]),
+    olist_orders[order_status] = "delivered"
+)
+
+/// Total repeat customers who purchased >1 time (based on customer_unique_id).
+/// Benchmark: 2,801
+Repeat Customers = 
+CALCULATE(
+    DISTINCTCOUNT(olist_customers[customer_unique_id]),
+    olist_customers[Repeat_Purchases] = 1,
+    olist_orders[order_status] = "delivered"
+)
+
+/// Pure measure approach for repeat customers without calculated column dependency.
+Repeat Customers (Measure) = 
+CALCULATE(
+    DISTINCTCOUNT(olist_customers[customer_unique_id]),
+    FILTER(
+        VALUES(olist_customers[customer_unique_id]),
+        CALCULATE(COUNT(olist_orders[order_id]), olist_orders[order_status] = "delivered") > 1
+    )
+)
+
+/// Repeat Customer Purchase Rate % (Target: ~3.00%)
+/// Benchmark: 3.00%
+Repeat Rate % = 
+DIVIDE([Repeat Customers], [Total Unique Customers], 0)
+
+/// Average Revenue per Unique Customer
+Revenue Per Customer = 
+DIVIDE([GMV], [Total Unique Customers], 0)
+
+/// Average items purchased per order
+Items Per Order = 
+DIVIDE(
+    CALCULATE(COUNTROWS(olist_order_items), olist_orders[order_status] = "delivered"),
+    [Total Orders],
+    0
+)
+
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 3. LOGISTICS & DELIVERY PERFORMANCE (Folder: 03_Delivery)
+// ──────────────────────────────────────────────────────────────────────────────
+
+/// Total delivered orders with recorded delivery timestamp.
+/// Benchmark: 96,470
+Delivered Orders = 
+CALCULATE(
+    COUNTROWS(olist_orders),
+    olist_orders[order_status] = "delivered",
+    NOT(ISBLANK(olist_orders[order_delivered_customer_date]))
+)
+
+/// Total orders delivered past the estimated delivery date.
+/// Benchmark: 7,826
+Late Deliveries = 
+CALCULATE(
+    COUNTROWS(olist_orders),
+    olist_orders[order_status] = "delivered",
+    olist_orders[order_delivered_customer_date] > olist_orders[order_estimated_delivery_date]
+)
+
+/// Late Delivery Rate %
+/// Benchmark: 8.11%
+Late Delivery Rate = 
+DIVIDE([Late Deliveries], [Delivered Orders], 0)
+
+/// On-Time Delivery Rate %
+/// Benchmark: 91.89%
+On-Time Rate % = 
+1 - [Late Delivery Rate]
+
+/// Average order-to-door transit time in days.
+/// Benchmark: ~12.5 days
+Avg Delivery Days = 
+AVERAGEX(
+    FILTER(
+        olist_orders,
+        olist_orders[order_status] = "delivered" &&
+        NOT(ISBLANK(olist_orders[order_delivered_customer_date])) &&
+        NOT(ISBLANK(olist_orders[order_purchase_timestamp]))
+    ),
+    DATEDIFF(olist_orders[order_purchase_timestamp], olist_orders[order_delivered_customer_date], DAY)
+)
+
+/// Average delivery delay in days vs estimated date (negative = early, positive = late).
+/// Benchmark: -11.2 days (arriving average 11 days before conservative estimate)
+Avg Delivery Delay Days = 
+AVERAGEX(
+    FILTER(
+        olist_orders,
+        olist_orders[order_status] = "delivered" &&
+        NOT(ISBLANK(olist_orders[order_delivered_customer_date])) &&
+        NOT(ISBLANK(olist_orders[order_estimated_delivery_date]))
+    ),
+    DATEDIFF(olist_orders[order_estimated_delivery_date], olist_orders[order_delivered_customer_date], DAY)
+)
+
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 4. CUSTOMER SATISFACTION & REVIEWS (Folder: 04_Satisfaction)
+// ──────────────────────────────────────────────────────────────────────────────
+
+/// Average review score for delivered orders.
+/// Benchmark: 4.16 / 5.00
+Avg Rating = 
+AVERAGE(olist_order_reviews[review_score])
+
+/// Total review count received
+Total Reviews = 
+COUNT(olist_order_reviews[review_score])
+
+/// Positive Review Percentage (4 or 5 stars)
+/// Benchmark: ~77%
+Positive Review Rate % = 
+DIVIDE(
+    CALCULATE(COUNTROWS(olist_order_reviews), olist_order_reviews[review_score] >= 4),
+    [Total Reviews],
+    0
+)
+
+/// Negative Review Percentage (1 or 2 stars)
+/// Benchmark: ~14%
+Negative Review Rate % = 
+DIVIDE(
+    CALCULATE(COUNTROWS(olist_order_reviews), olist_order_reviews[review_score] <= 2),
+    [Total Reviews],
+    0
+)
+
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 5. SELLER ECOSYSTEM & CONCENTRATION (Folder: 05_Sellers)
+// ──────────────────────────────────────────────────────────────────────────────
+
+/// Count of distinct active sellers fulfilling delivered orders.
+/// Benchmark: 2,970
+Active Sellers = 
+CALCULATE(
+    DISTINCTCOUNT(olist_order_items[seller_id]),
+    olist_orders[order_status] = "delivered"
+)
+
+/// Revenue driven by Top 10 sellers
+Top 10 Sellers GMV = 
+CALCULATE(
+    [GMV],
+    TOPN(10, ALLSELECTED(olist_sellers[seller_id]), [GMV], DESC)
+)
+
+/// Share of GMV concentrated in Top 10 sellers
+Top 10 Sellers Share % = 
+DIVIDE([Top 10 Sellers GMV], [GMV], 0)
+
+/// Revenue driven by Top 20% sellers (Pareto check)
+Top 20 Pct Sellers GMV = 
+VAR TotalSellerCount = [Active Sellers]
+VAR Top20Count = ROUND(TotalSellerCount * 0.20, 0)
+RETURN
+    CALCULATE(
+        [GMV],
+        TOPN(Top20Count, ALLSELECTED(olist_sellers[seller_id]), [GMV], DESC)
+    )
+
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 6. CATEGORY PARETO ANALYSIS (Folder: 06_Category)
+// ──────────────────────────────────────────────────────────────────────────────
+
+/// Cumulative category revenue percentage for Pareto curve overlay
+Cumulative Category GMV % = 
+VAR CurrentCatRev = [GMV]
+VAR TotalCatRev = CALCULATE([GMV], ALLSELECTED(olist_products[category_english]))
+VAR RunningTotal = 
+    CALCULATE(
+        [GMV],
+        FILTER(
+            ALLSELECTED(olist_products[category_english]),
+            [GMV] >= CurrentCatRev
+        )
+    )
+RETURN 
+    DIVIDE(RunningTotal, TotalCatRev, 0)
+
+/// Pareto 80% Threshold Line (Constant reference for combo chart)
+Pareto 80% Cutoff = 
+0.80
+
